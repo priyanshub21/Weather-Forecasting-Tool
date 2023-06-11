@@ -1,0 +1,41 @@
+import requests
+import json
+
+def get_weather_forecast(city):
+    api_key = "YOUR_API_KEY"  # Replace with your OpenWeatherMap API key
+    base_url = "http://api.openweathermap.org/data/2.5/weather"
+    params = {
+        "q": city,
+        "appid": api_key,
+        "units": "metric"  # Use metric units for temperature in Celsius
+    }
+
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()  # Raise an exception if request fails
+
+        weather_data = response.json()
+
+        # Extract relevant information from the API response
+        temperature = weather_data["main"]["temp"]
+        humidity = weather_data["main"]["humidity"]
+        wind_speed = weather_data["wind"]["speed"]
+        weather_desc = weather_data["weather"][0]["description"]
+
+        # Display the weather forecast to the user
+        print(f"Weather forecast for {city}:")
+        print(f"Temperature: {temperature}°C")
+        print(f"Humidity: {humidity}%")
+        print(f"Wind Speed: {wind_speed} m/s")
+        print(f"Weather Description: {weather_desc}")
+
+    except requests.exceptions.HTTPError as err:
+        print(f"Error: {err}")
+    except json.JSONDecodeError:
+        print("Error: Invalid JSON response from the API")
+    except KeyError:
+        print("Error: Failed to parse weather data")
+
+if __name__ == "__main__":
+    city_name = input("Enter a city name: ")
+    get_weather_forecast(city_name)
